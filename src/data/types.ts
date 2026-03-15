@@ -27,6 +27,7 @@ interface Upgrade {
     cloutPowerChange?: number;
     coinPriceMultiplier?: number;
     activeForSeconds?: number;
+    additionalLives?: number;
     unlockAtLevel: number;
 }
 

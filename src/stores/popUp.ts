@@ -1,20 +1,30 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import type { Achievement } from '../data/types';
+import alertSound from '../assets/sounds/alert.wav';
+import { playSound } from '../helperFuncs';
+
+
 
 export const usePopUpStore = defineStore('popUp', () => {
     const isVisible = ref(false);
     const title = ref('');
     const description = ref('');
 
-    const triggerPopUp = (a: Achievement) => {
+    let queue: Promise<void> = Promise.resolve()
+    const triggerPopUp = async (a: Achievement) => {
+        await queue;
+
+        queue = showPopUp(a);
+    }
+
+    const showPopUp = async (a: Achievement) => {
         isVisible.value = true;
         title.value = a.title;
         description.value = a.description;
+        playSound(alertSound);
 
-        setTimeout(() => {
-            isVisible.value = false;
-        }, 3000);
+        return new Promise<void>((resolve) => setTimeout(() => { isVisible.value = false; resolve() }, 3000));
     }
 
     return {

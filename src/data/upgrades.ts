@@ -136,7 +136,7 @@ export const upgradesSection: Section<Upgrade> = {
             title: "Celebrity shield",
             description: "One time protection when heat rises near limit",
             icon: onetimeShield,
-            heatChange: -100,
+            additionalLives: 1,
             cloutPowerChange: 0,
             price: 1000,
             upgradePriceMultiplier: 6,

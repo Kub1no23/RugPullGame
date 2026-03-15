@@ -74,10 +74,6 @@ button {
   transition: border-color 0.25s;
 }
 
-button:hover {
-  border-color: #646cff;
-}
-
 .icon {
   width: 100px;
   aspect-ratio: 1 / 1;
