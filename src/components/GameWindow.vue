@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, watchEffect } from 'vue'
+import { ref, watch } from 'vue'
 import { useGameMetricsStore } from '../stores/gameMetrics';
 import { usePopUpStore } from '../stores/popUp';
 import { useEndScreenStore } from '../stores/endScreen';
