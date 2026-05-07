@@ -3,12 +3,9 @@ import { ref, watch } from 'vue'
 import { useGameMetricsStore } from '../stores/gameMetrics';
 import { usePopUpStore } from '../stores/popUp';
 import { useEndScreenStore } from '../stores/endScreen';
-import PopUp from './PopUp.vue';
+import Notification from './Notification.vue';
 import EndScreen from './EndScreen.vue';
 import Menu from './Menu.vue';
-import { achievementsSection } from '../data/achievements';
-import { upgradesSection } from '../data/upgrades';
-import room from '../assets/background/room.png';
 import Character from './Character.vue';
 import logo from '../assets/logo.png';
 import blank from '../assets/monitor/blank.png';
@@ -24,20 +21,30 @@ import hypeTwoSvgRaw from '../assets/character/hype-2.svg?raw';
 import hypedSvgRaw from '../assets/character/hyped.svg?raw';
 import clickSound from '../assets/sounds/click.mp3';
 import { playSound } from '../helperFuncs';
+import { useAchievementsStore } from "../stores/achievements";
+import { useUpgradesStore } from '../stores/upgrades';
+import SaveButton from './SaveButton.vue';
+import UploadButton from './UploadButton.vue';
+import FileUpload from './FileUpload.vue';
+import { useSaveSystem } from "../stores/saveSystem";
+
 
 
 defineProps<{}>()
 
+const achievements = useAchievementsStore();
+const upgrades = useUpgradesStore();
 const game = useGameMetricsStore();
 const popUp = usePopUpStore();
 const endScreen = useEndScreenStore(); 
-const clickCount = ref(0);
 const currentCharacter = ref<string>(neutralSvgRaw);
 const currentMonitor = ref<string>(blank);
 const afk = ref<boolean>(false);
 const afkTimeout = ref<number | null>(null)
+const saveSystem = useSaveSystem();
 
 const handleClick = () => {
+   game.clickCount++;
    const priceIncrease = (game.cloutPower / game.volumePercentage) * 0.005;
    game.changeCoinPrice(Number(priceIncrease.toFixed(4)));
 
@@ -51,15 +58,28 @@ const handleClick = () => {
    console.log(`Coins sold: ${coinsSold}, New price: ${game.coinPrice.toFixed(4)}, Balance increase: ${game.balance.toFixed(2)}`);
 }
 const handleRugPull = () => {
-   const coinsToSell = game.coinsOwned * (game.volumePercentage / 100);
-   const gainedBalance = coinsToSell * game.coinPrice;
+   let coinsToSell;
+   let gainedBalance;
+   if (game.taxEvasion > 0) {
+      game.taxEvasion--;
+      coinsToSell = game.coinsOwned * 1;
+      gainedBalance = coinsToSell * game.coinPrice;
+      achievements.unlock(5);
+   } else {
+      coinsToSell = game.coinsOwned * (game.volumePercentage / 100);
+      gainedBalance = coinsToSell * game.coinPrice;
+   }
 
    game.changeBalance(Number(gainedBalance.toFixed(4)));
    game.changeHeatLevelPercentage(50);
    game.setCoinPrice(0.0001);
-   game.setCoinsOwned(50000);
+   game.setCoinsOwned(game.totalCoins + ((game.level + 1) * 2500));
    game.increaseLevel();
    game.setRugPull(true);
+
+   if (game.volumePercentage >= 75) {
+      achievements.unlock(2);
+   }
 };
 
 const updateUI = () => {
@@ -94,6 +114,7 @@ const updateUI = () => {
 
 watch(afk, () => {
    if (afk.value === true) {
+      saveSystem.saveToLocalStorage();
       switch (currentMonitor.value) {
          case up:
             currentMonitor.value = upDown
@@ -115,12 +136,18 @@ watch(afk, () => {
 });
 watch(() => game.heatLevelPercentage, (heat) => {
    console.log('heelo' + heat);
+   saveSystem.saveToLocalStorage();
    if (heat > 90 && game.lives > 0) {
-      endScreen.openModal('defeat', false, () => { game.setHeatLevelPercentage(0); game.setRugPull(null) }, `You've been caught`, 'You managed to escape from the authorities');
+      game.lives--;
+      endScreen.openModal('defeat', false, () => { game.setHeatLevelPercentage(0); game.setRugPull(null); game.setCoinPrice(0.0001); game.setCoinsOwned(20000)}, `You've been caught`, 'You managed to escape from the authorities');
+      achievements.unlock(6);
+
       return;
    }
    else if (heat > 90) {
       endScreen.openModal('defeat', true, game.resetGame, `You've been caught`, 'You are a disgrace to the scammer community');
+      achievements.unlock(6);
+
       return;
    }
 
@@ -129,21 +156,33 @@ watch(() => game.heatLevelPercentage, (heat) => {
       return;
    }
 })
-
-const handleCountClick = () => {
-   clickCount.value++;
-   console.log(clickCount.value)
-   if (clickCount.value % 5 === 0 && clickCount.value !== 0) {
-      endScreen.openModal('defeat', false, () => {}, 'You won', 'All scammer communities are proud');
-      popUp.triggerPopUp({ title: 'Achievement Unlocked!', description: `You clicked ${clickCount.value} times!`, id: 0, unlocked: true, icon: 'bla'});
-      currentCharacter.value = hypedSvgRaw;
+watch(() => game.coinsOwned, () => {
+   if (game.coinsOwned <= 0 && game.lives > 0) {
+      game.lives--;
+      endScreen.openModal('defeat', false, () => { game.setHeatLevelPercentage(0); game.setRugPull(null); game.setCoinPrice(0.0001); game.setCoinsOwned(20000) }, `You've been caught`, 'You managed to escape from the authorities');
+      achievements.unlock(6);
    }
-}
+   else if (game.coinsOwned <= 0) {
+      endScreen.openModal('defeat', true, game.resetGame, `You've been caught`, 'You are a disgrace to the scammer community');
+      achievements.unlock(6);
+      achievements.unlock(7);
+   }
+});
+watch(() => game.clickCount, () => {
+   if (game.clickCount === 1) {
+      achievements.unlock(0);
+   }
+});
+watch(() => game.level, () => {
+   if (game.level >= 5) {
+      achievements.unlock(4);
+   }
+});
 </script>
 
 <template>
    <main
-      :style="{ backgroundImage: `url(${room})` }"
+      :style="{ backgroundImage: `url(${game.background})` }"
       class="h-dvh w-screen bg-cover bg-top bg-no-repeat flex max-md:flex-col-reverse max-md:overflow-y-scroll gap-6 px-[clamp(8px,2vw,48px)] py-[clamp(6px,1.3vh,25px)]">
       <h1 class="fixed top-3 left-3 w-[clamp(150px,30vw,350px)]"><img :src="logo" alt="RugPullGame logo" class="w-full"></h1>
 
@@ -191,14 +230,17 @@ const handleCountClick = () => {
             </div>
          </section>
          <section id="menu" class="flex flex-col gap-3 w-[260px] h-full max-md:h-auto justify-center xl:ml-auto">
-            <button @click="handleCountClick">Count is: {{ clickCount }}</button>
-            <Menu :section="achievementsSection" ></Menu>
-            <Menu :section="upgradesSection"></Menu>
+            <button>Click count: {{ game.clickCount }}</button>
+            <Menu :heading="achievements.section.heading"></Menu>
+            <Menu :heading="upgrades.section.heading"></Menu>
+            <SaveButton />
+            <UploadButton />
          </section>
       </div>
 
-      <PopUp />
+      <Notification />
       <EndScreen v-if="endScreen.isOpen" />
+      <FileUpload />
    </main>
 </template>
 

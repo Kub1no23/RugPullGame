@@ -160,7 +160,7 @@ if (endScreen.type === 'victory') {
         </div>
         <div
         class="
-            relative z-60
+            relative z-[60]
             p-6
             bg-[#c8b8a8] text-[#2a1f1a]
             font-bold tracking-wide

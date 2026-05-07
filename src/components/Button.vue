@@ -1,14 +1,12 @@
 <script setup lang="ts">
-const props = defineProps({
-  text: {
-    type: String,
-    required: true
-  }
-})
+const emit = defineEmits(["click"])
+const props = defineProps<{
+  text: string
+}>()
 </script>
 
 <template>
-  <button
+  <button @click="emit('click')"
     class="
       px-4 py-2 font-bold uppercase tracking-wide
       bg-[#c8b8a8] text-[#2a1f1a]

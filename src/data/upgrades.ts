@@ -22,9 +22,9 @@ export const upgradesSection: Section<Upgrade> = {
             description: "Lower the heat by investing your own money",
             icon: invest,
             heatChange: -15,
-            cloutPowerChange: 100,
+            cloutPowerChange: 2,
             price: 300,
-            upgradePriceMultiplier: 1.25,
+            upgradePriceMultiplier: 1.5,
             unlockAtLevel: 0
         },
         {
@@ -33,9 +33,9 @@ export const upgradesSection: Section<Upgrade> = {
             description: "Build social media presence and clout power",
             icon: advertise,
             heatChange: 5,
-            cloutPowerChange: 100,
+            cloutPowerChange: 1,
             price: 200,
-            upgradePriceMultiplier: 1.3,
+            upgradePriceMultiplier: 1.5,
             unlockAtLevel: 0
         },
         {
@@ -43,11 +43,11 @@ export const upgradesSection: Section<Upgrade> = {
             title: "Bots Farm",
             description: `Army of bots commenting "To the moon! 🚀"`,
             icon: botsPromote,
-            heatChange: 30,
+            heatChange: 15,
             cloutPowerChange: 0,
-            coinPriceMultiplier: 1.15,
+            coinPriceMultiplier: 2,
             price: 500,
-            upgradePriceMultiplier: 1.25,
+            upgradePriceMultiplier: 3,
             unlockAtLevel: 0
         },
         {
@@ -55,11 +55,11 @@ export const upgradesSection: Section<Upgrade> = {
             title: "Deepfake Endorsement",
             description: "Fake tweets endorsing your coin",
             icon: botsDeepfake,
-            heatChange: 40,
-            cloutPowerChange: 100,
-            coinPriceMultiplier: 1.3,
-            price: 1000,
-            upgradePriceMultiplier: 1.2,
+            heatChange: 30,
+            cloutPowerChange: 4,
+            coinPriceMultiplier: 1.5,
+            price: 7500,
+            upgradePriceMultiplier: 2,
             unlockAtLevel: 2
         },
         {
@@ -67,11 +67,11 @@ export const upgradesSection: Section<Upgrade> = {
             title: "Influencer advertisements",
             description: "Celebrities advertising your coin to the public",
             icon: celebAdvertisement,
-            heatChange: -10,
-            cloutPowerChange: 150,
-            coinPriceMultiplier: 1.15,
-            price: 500,
-            upgradePriceMultiplier: 1.2,
+            heatChange: 0,
+            cloutPowerChange: 3,
+            coinPriceMultiplier: 1.3,
+            price: 2000,
+            upgradePriceMultiplier: 2,
             unlockAtLevel: 1
         },
         {
@@ -79,10 +79,10 @@ export const upgradesSection: Section<Upgrade> = {
             title: "Whitepapers",
             description: "Generate nonsense technical texts regarding the stability of your coin to calm down investors",
             icon: whitepaper,
-            heatChange: -20,
+            heatChange: -25,
             cloutPowerChange: 0,
             price: 500,
-            upgradePriceMultiplier: 1.25,
+            upgradePriceMultiplier: 2,
             unlockAtLevel: 0
         },
         {
@@ -91,10 +91,10 @@ export const upgradesSection: Section<Upgrade> = {
             description: "Enter new exchange to increase demand for your coin",
             icon: exchangeListing,
             heatChange: 10,
-            cloutPowerChange: 300,
-            coinPriceMultiplier: 1.5,
-            price: 5000,
-            upgradePriceMultiplier: 1.2,
+            cloutPowerChange: 5,
+            coinPriceMultiplier: 2,
+            price: 40000,
+            upgradePriceMultiplier: 3,
             unlockAtLevel: 3
         },
         {
@@ -102,10 +102,10 @@ export const upgradesSection: Section<Upgrade> = {
             title: "Donate to charity",
             description: "Lowers heat while building reputation",
             icon: donateCharity,
-            heatChange: -25,
-            cloutPowerChange: 200,
-            price: 500,
-            upgradePriceMultiplier: 1.25,
+            heatChange: -20,
+            cloutPowerChange: 3,
+            price: 1500,
+            upgradePriceMultiplier: 2,
             unlockAtLevel: 1
         },
         {
@@ -114,10 +114,10 @@ export const upgradesSection: Section<Upgrade> = {
             description: "Increases clout power for 30 seconds",
             icon: fomo,
             heatChange: 20,
-            cloutPowerChange: 200,
+            cloutPowerChange: 10,
             activeForSeconds: 30,
-            price: 1500,
-            upgradePriceMultiplier: 1.25,
+            price: 10000,
+            upgradePriceMultiplier: 2.5,
             unlockAtLevel: 2
         },
         {
@@ -127,8 +127,8 @@ export const upgradesSection: Section<Upgrade> = {
             icon: taxEvasion,
             heatChange: 30,
             cloutPowerChange: 0,
-            price: 2000,
-            upgradePriceMultiplier: 1.3,
+            price: 20000,
+            upgradePriceMultiplier: 2,
             unlockAtLevel: 4
         },
         {
@@ -138,8 +138,8 @@ export const upgradesSection: Section<Upgrade> = {
             icon: onetimeShield,
             additionalLives: 1,
             cloutPowerChange: 0,
-            price: 1000,
-            upgradePriceMultiplier: 6,
+            price: 30000,
+            upgradePriceMultiplier: 2,
             unlockAtLevel: 2
         },
         {
@@ -149,8 +149,8 @@ export const upgradesSection: Section<Upgrade> = {
             icon: lagoon,
             heatChange: 0,
             cloutPowerChange: 500,
-            price: 25000,
-            upgradePriceMultiplier: 1.3,
+            price: 500000,
+            upgradePriceMultiplier: 100,
             unlockAtLevel: 4
         }
     ]

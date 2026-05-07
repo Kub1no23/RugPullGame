@@ -59,6 +59,13 @@ export const achievementsSection: Section<Achievement> = {
             description: "You've been caught by the authorities",
             icon: caught,
             unlocked: false
+        },
+        {
+            id: 7,
+            title: "Balls of patience",
+            description: "You've run out of coins and can't rug pull",
+            icon: caught,
+            unlocked: false
         }
     ]
 }

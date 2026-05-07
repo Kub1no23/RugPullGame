@@ -18,7 +18,7 @@ watch(() => popUp.isVisible, (visible) => {
 </script>
 
 <template>
-    <Card v-if="popUp.isVisible" :class="visibleClass" class="fixed bottom-5 max-w-[400px] w-[60vw]">
+    <Card v-if="popUp.isVisible" :class="visibleClass" class="z-[100] fixed bottom-5 max-w-[400px] w-[60vw]">
         <p>{{ popUp.title }}</p>
         <p>{{ popUp.description }}</p>
     </Card>

@@ -1,51 +1,38 @@
 <script setup lang="ts">
 import type { Achievement, Upgrade } from '../data/types';
-import { computed, ref, type ComputedRef } from 'vue';
+import { computed, ref } from 'vue';
 import { useGameMetricsStore } from '../stores/gameMetrics';
 import Card from './Card.vue';
 import errorSound from '../assets/sounds/error.mp3';
 import confirmSound from '../assets/sounds/confirmation.mp3';
+import { useAchievementsStore } from "../stores/achievements";
+import { useUpgradesStore } from '../stores/upgrades';
+import { playSound } from '../helperFuncs';
 
-const props = defineProps<{item: Achievement | Upgrade, heading: string}>();
-const game = useGameMetricsStore();
-let isLocked: ComputedRef<boolean>;
+const props = defineProps<{itemId: number, heading: string}>();
 let success = ref<boolean | null>(null);
+const game = useGameMetricsStore();
+const achievements = useAchievementsStore();
+const upgrades = useUpgradesStore();
 
-const playSound = (file: string) => {
-   const audio = new Audio(file);
-   audio.currentTime = 0;
-   audio.play();
-}
+let item: Achievement | Upgrade = props.heading === 'Achievements' 
+   ? achievements.section.items.find(a => a.id === props.itemId)! 
+   : upgrades.section.items.find(u => u.id === props.itemId)!;
 
-const sectionType = (heading: string) => {
-    switch (heading) {
-        case 'Achievements':
-            const a = props.item as Achievement
-            isLocked = computed(() => a.unlocked === false);
-            
-            return `
-                <img class="w-16 h-16 mx-auto mb-3 drop-shadow-[2px_2px_0_#000]" src=${a.icon} alt="${a.title} icon">
-                <p class="self-start">${ a.title }</p>
-                <p class="self-start">${ a.description }</p>
-            `
-        case 'Upgrades & Actions':
-            const u = props.item as Upgrade
-            isLocked = computed(() => u.unlockAtLevel > game.level);
-
-            return `
-                <img class="icon" src=${u.icon} alt="${u.title} icon">
-                <p class="self-start text-xl font-extrabold text-[#f5e9d8] drop-shadow-[2px_2px_0_#000]">${ u.title }</p>
-                <p class="self-start text-sm text-[#f5e9d8]/90 leading-snug drop-shadow-[1px_1px_0_#000]">${ u.description }</p>
-                <p class="self-start text-xl font-bold text-[#f5e9d8] drop-shadow-[1px_1px_0_#000] mt-auto">$${ u.price }</p>
-            `
+const isLocked = computed(() => {
+    if (props.heading === 'Achievements') {
+        return !(item as Achievement).unlocked
     }
-}
-const htmlContent = sectionType(props.heading);
+    if (props.heading === 'Upgrades & Actions') {
+        return (item as Upgrade).unlockAtLevel > game.level
+    }
+    return false
+})
 
 const onClick = (heading: string) => {
     switch (heading) {
         case 'Upgrades & Actions':
-            const u = props.item as Upgrade
+            const u = item as Upgrade
 
             if (game.balance < u.price || isLocked.value === true) {
                 console.log(game.balance);
@@ -60,6 +47,7 @@ const onClick = (heading: string) => {
                 playSound(confirmSound);
                 success.value = true;
                 game.applyUpgrade(u);
+                if (u.id === 11) achievements.unlock(3);
 
                 setTimeout(() => {
                     success.value = null;
@@ -83,12 +71,42 @@ const onClick = (heading: string) => {
             ? 'hover:shadow-[5px_5px_0_0_#E53935] shadow-[5px_5px_0_0_#E53935]'
             : 'hover:shadow-[5px_5px_0_0_#d6cec7]']">
         <div
-         @click="() => (onClick(props.heading))"
-         v-html="htmlContent"
-         :class="[
-             'p-2 w-full h-full bg-[#3b2d26] flex flex-col gap-3 items-center',
-             { locked: isLocked }]">
-         </div>
+            v-if="heading === 'Upgrades & Actions'"
+            :key="(item as Upgrade).id"
+            @click="() => onClick(heading)"
+            :class="[
+                'p-2 w-full h-full bg-[#3b2d26] flex flex-col gap-3 items-center',
+                { locked: isLocked }
+            ]">
+                <img
+                class="icon"
+                :src="(item as Upgrade).icon"
+                :alt="(item as Upgrade).title + ' icon'"/>
+                <p class="self-start text-xl font-extrabold text-[#f5e9d8] drop-shadow-[2px_2px_0_#000]">
+                {{ (item as Upgrade).title }}
+                </p>
+                <p class="self-start text-sm text-[#f5e9d8]/90 leading-snug drop-shadow-[1px_1px_0_#000]">
+                {{ (item as Upgrade).description }}
+                </p>
+                <p :key="(item as Upgrade).price" class="self-start text-xl font-bold text-[#f5e9d8] drop-shadow-[1px_1px_0_#000] mt-auto">
+                ${{ (item as Upgrade).price }}
+                </p>
+        </div>
+        <div
+            v-else-if="heading === 'Achievements'"
+            :key="(item as Achievement).id"
+            @click="() => onClick(heading)"
+            :class="[
+                'p-2 w-full h-full bg-[#3b2d26] flex flex-col gap-3 items-center',
+                { locked: isLocked }
+            ]">
+                <img
+                class="icon"
+                :src="(item as Achievement).icon"
+                :alt="(item as Achievement).title + ' icon'"/>
+                <p class="self-start text-xl font-extrabold text-[#f5e9d8] drop-shadow-[2px_2px_0_#000]">{{ (item as Achievement).title }}</p>
+                <p class="self-start text-sm text-[#f5e9d8]/90 leading-snug drop-shadow-[1px_1px_0_#000]">{{ (item as Achievement).description }}</p>
+        </div>
     </Card>
 </template>
 

@@ -1,16 +1,29 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { Achievement, Upgrade } from '../data/types';
+import { useUpgradesStore } from '../stores/upgrades';
+import { useAchievementsStore } from '../stores/achievements';
 import MenuItem from './MenuItem.vue';
 import Button from './Button.vue';
 
-const props = defineProps<{section: {heading: string, description: string, items: Achievement[] | Upgrade[]}}>();
-let {heading, description, items} = props.section;
+const props = defineProps<{heading: string}>();
+let items: Achievement[] | Upgrade[] = [];
+let description = '';
 
-if (heading === 'Upgrades & Actions') {
-   const upgrades = items as Upgrade[];
-   upgrades.sort((a, b) => a.unlockAtLevel - b.unlockAtLevel);
-   items = upgrades;
+if (props.heading === 'Upgrades & Actions') {
+   const upgSection = useUpgradesStore().section;
+   const upgrds: Upgrade[] = upgSection.items;
+   description = upgSection.description;
+   
+   upgrds.sort((a, b) => a.unlockAtLevel - b.unlockAtLevel);
+
+   items = upgrds;
+} else if (props.heading === 'Achievements') {
+   const achSection = useAchievementsStore().section;
+   const achs: Achievement[] = achSection.items;
+   description = achSection.description;
+
+   items = achs;
 }
 
 const isVisible = ref(false);
@@ -25,7 +38,7 @@ const isVisible = ref(false);
         <p class="text-lg font-medium text-[#f5e9d8]/90 leading-snug drop-shadow-[1px_1px_0_#000]">{{ description }}</p>
 
         <div class="w-full grid gap-3 grid-cols-[repeat(auto-fit,minmax(250px,1fr))] grid-rows-[auto] overflow-x-visible mb-2">
-           <MenuItem v-for="item in items" :key="item.id" :item :heading />
+           <MenuItem v-for="item in items" :key="item.id" :itemId="item.id" :heading />
         </div>
         
         <Button @click="isVisible = !isVisible" text="Close Menu" class="mb-2 mt-auto"/>
