@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useGameMetricsStore } from '../stores/gameMetrics';
-import { usePopUpStore } from '../stores/popUp';
 import { useEndScreenStore } from '../stores/endScreen';
 import Notification from './Notification.vue';
 import EndScreen from './EndScreen.vue';
@@ -18,7 +17,7 @@ import threeUpDown from '../assets/monitor/threeup-down.png';
 import neutralSvgRaw from '../assets/character/neutral.svg?raw';
 import hypeOneSvgRaw from '../assets/character/hype-1.svg?raw';
 import hypeTwoSvgRaw from '../assets/character/hype-2.svg?raw';
-import hypedSvgRaw from '../assets/character/hyped.svg?raw';
+//import hypedSvgRaw from '../assets/character/hyped.svg?raw';
 import clickSound from '../assets/sounds/click.mp3';
 import { playSound } from '../helperFuncs';
 import { useAchievementsStore } from "../stores/achievements";
@@ -35,7 +34,6 @@ defineProps<{}>()
 const achievements = useAchievementsStore();
 const upgrades = useUpgradesStore();
 const game = useGameMetricsStore();
-const popUp = usePopUpStore();
 const endScreen = useEndScreenStore(); 
 const currentCharacter = ref<string>(neutralSvgRaw);
 const currentMonitor = ref<string>(blank);
